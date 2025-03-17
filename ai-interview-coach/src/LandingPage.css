@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
 @keyframes gradientAnimation {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
@@ -10,6 +12,12 @@
     100% { box-shadow: 0px 0px 10px rgba(0, 123, 255, 0.5); }
 }
 
+@keyframes borderGlow {
+    0% { box-shadow: 0 0 10px rgba(0, 123, 255, 0.3); }
+    50% { box-shadow: 0 0 40px rgba(11, 37, 65, 0.8); }
+    100% { box-shadow: 0 0 10px rgba(0, 123, 255, 0.3); }
+}
+
 .landing-container {
     display: flex;
     flex-direction: column;
@@ -19,7 +27,7 @@
     width: 100vw;
     text-align: center;
     color: rgba(255, 255, 255, 0.9);
-    background: linear-gradient(-45deg, #030509, #070A10, #0A0F1A, #070A10, #030509);
+    background: linear-gradient(-45deg, #000000, #0A0A0A, #101010, #000000);
     background-size: 700% 700%;
     animation: gradientAnimation 12s infinite alternate ease-in-out;
 }
@@ -37,22 +45,35 @@
     border-radius: 30px;
     box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.4);
     transition: transform 0.3s ease-in-out;
+    backdrop-filter: blur(12px);
+    animation: borderGlow 5s infinite alternate ease-in-out;
 }
 
 .title-container:hover {
-    transform: scale(1.02);
+    transform: scale(1.03);
 }
 
 .title {
-    font-size: 2.8rem;
-    font-weight: bold;
-    margin-bottom: 15px;
+    font-family: "Open Sans", sans-serif;
+    font-size: 3rem;
+    font-weight: 700; /* Adjust between 300 (thin) to 800 (bold) */
+    font-style: normal;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0px 0px 2px rgba(0, 123, 255, 0.8);
 }
 
 .tagline {
-    font-size: 1.3rem;
-    margin-bottom: 25px;
-    color: rgba(255, 255, 255, 0.8);
+    font-family: "Open Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400; /* Slightly lighter than title */
+    font-style: normal;
+    font-size: 1.4rem;
+    text-align: center;
+    letter-spacing: 0.5px;
+    margin-bottom: 30px;
+    color: rgba(255, 255, 255, 0.85);
 }
 
 .start-button {
@@ -62,13 +83,17 @@
     color: white;
     background: linear-gradient(90deg, #007bff, #0056b3);
     border: none;
-    border-radius: 11px;
+    border-radius: 12px;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
     margin-top: 50px;
     
     animation: glow 2s infinite alternate;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    box-shadow: 0px 0px 15px rgba(0, 123, 255, 0.8);
 }
+
 
 .start-button:hover {
     background: linear-gradient(90deg, #0056b3, #003c82);
