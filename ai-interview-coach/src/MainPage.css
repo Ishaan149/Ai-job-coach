@@ -23,7 +23,7 @@
     color: rgba(255, 255, 255, 0.9);
     background: linear-gradient(-45deg, #000000, #0A0A0A, #101010, #000000);
     background-size: 700% 700%;
-    animation: gradientAnimation 12s infinite alternate ease-in-out;
+    animation: gradientAnimation 8s infinite alternate ease-in-out;
 }
 
 h1 {
@@ -108,6 +108,22 @@ p {
 }
 
 .resume-button:active {
+    transform: scale(0.98);
+}
+
+/* Green Button When Resume is Uploaded */
+.resume-button.resume-added {
+    background: linear-gradient(90deg, #28a745, #218838);
+    box-shadow: 0px 0px 15px rgba(40, 167, 69, 0.8);
+    animation: none; /* Stop blue glow animation */
+}
+
+.resume-button.resume-added:hover {
+    background: linear-gradient(90deg, #218838, #1e7e34);
+    transform: scale(1.05);
+}
+
+.resume-button.resume-added:active {
     transform: scale(0.98);
 }
 
