@@ -7,28 +7,31 @@ const MainPage: React.FC = () => {
     const [tempJobDescription, setTempJobDescription] = useState("");
     const [resume, setResume] = useState<File | null>(null);
 
-
     const handleSave = () => {
-        setJobDescription(tempJobDescription); 
+        setJobDescription(tempJobDescription);
         setShowModal(false);
     };
 
     const openModal = () => {
-        setTempJobDescription(jobDescription); 
+        setTempJobDescription(jobDescription);
         setShowModal(true);
     };
 
     const handleResumeUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
-        const file = event.target.files[0];
+            const file = event.target.files[0];
 
-        // Ensure the file is a PDF
-        if (file.type === "application/pdf") {
-            setResume(file);
-        } else {
-            alert("Please upload a PDF file.");
+            if (file.type === "application/pdf") {
+                setResume(file);
+            } else {
+                alert("Please upload a PDF file.");
+            }
         }
-        }
+    };
+
+    const startInterview = () => {
+        alert("Starting the interview process...");
+        // Add your interview process logic here
     };
 
     return (
@@ -53,8 +56,8 @@ const MainPage: React.FC = () => {
                 </button>
 
                 {/* Job Upload Button */}
-                <button 
-                    className={`job-button ${jobDescription ? "job-added" : ""}`} 
+                <button
+                    className={`job-button ${jobDescription ? "job-added" : ""}`}
                     id="upload-button"
                     onClick={openModal}
                 >
@@ -63,21 +66,30 @@ const MainPage: React.FC = () => {
 
                 {showModal && (
                     <div className="modal-overlay">
-                    <div className="modal-content">
-                        <h2>Enter Job Description</h2>
-                        <textarea
-                        placeholder="Paste your job description here..."
-                        value={tempJobDescription}
-                        onChange={(e) => setTempJobDescription(e.target.value)}
-                        className="job-textarea"
-                        />
-                        <div className="modal-buttons">
-                        <button className="close-button" onClick={() => setShowModal(false)}>Close</button>
-                        <button className="save-button" onClick={handleSave}>Save</button>
+                        <div className="modal-content">
+                            <h2>Enter Job Description</h2>
+                            <textarea
+                                placeholder="Paste your job description here..."
+                                value={tempJobDescription}
+                                onChange={(e) => setTempJobDescription(e.target.value)}
+                                className="job-textarea"
+                            />
+                            <div className="modal-buttons">
+                                <button className="close-button" onClick={() => setShowModal(false)}>Close</button>
+                                <button className="save-button" onClick={handleSave}>Save</button>
+                            </div>
                         </div>
                     </div>
-                    </div>
                 )}
+
+                {/* Start Interview Button */}
+                <button
+                    className={`start-interview-button ${resume && jobDescription ? "enabled" : "disabled"}`}
+                    onClick={startInterview}
+                    disabled={!resume || !jobDescription}
+                >
+                    Start Interview
+                </button>
             </div>
         </div>
     );

@@ -249,6 +249,39 @@ h2 {
     transform: scale(0.95);
 }
 
+
+/* Start Interview Button */
+.start-interview-button {
+    padding: 15px 30px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: white;
+    background: linear-gradient(90deg, #6c757d, #495057);
+    border: none;
+    border-radius: 12px;
+    cursor: not-allowed;
+    transition: all 0.3s ease-in-out;
+    margin-top: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    box-shadow: 0px 0px 10px rgba(108, 117, 125, 0.8);
+}
+
+.start-interview-button.enabled {
+    background: linear-gradient(90deg, #ffcc00, #ff9900);
+    cursor: pointer;
+    box-shadow: 0px 0px 15px rgba(255, 204, 0, 0.8);
+}
+
+.start-interview-button.enabled:hover {
+    background: linear-gradient(90deg, #ff9900, #ff7700);
+    transform: scale(1.05);
+}
+
+.start-interview-button.enabled:active {
+    transform: scale(0.98);
+}
+
 /* Animations */
 @keyframes fadeIn {
     from { opacity: 0; }
