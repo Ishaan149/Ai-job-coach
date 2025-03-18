@@ -12,7 +12,7 @@ const MainPage: React.FC = () => {
 
     const [interviewQuestions, setInterviewQuestions] = useState<string[]>([]);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    const [isInterviewStarted, setIsInterviewStarted] = useState(false);
+    const [showFlashcard, setShowFlashcard] = useState(false);
 
     const handleSave = () => {
         setJobDescription(tempJobDescription);
@@ -59,30 +59,16 @@ const MainPage: React.FC = () => {
     };
 
     const fetchInterviewQuestions = async () => {
-        console.log("Fetching interview questions...");
-    
-        if (!pdfContent || !jobDescriptionContent) {
-            alert("Resume text or Job Description is missing!");
-            return;
-        }
-    
         try {
-            console.log("Sending request to backend with:", {
-                resume_text: pdfContent,
-                job_description: jobDescriptionContent,
-            });
-    
             const response = await axios.post("http://127.0.0.1:8000/generate_questions/", {
                 resume_text: pdfContent,
                 job_description: jobDescriptionContent,
             });
-    
-            console.log("Response received:", response.data);
-    
+
             if (response.data.questions) {
                 setInterviewQuestions(response.data.questions.map((q: { question: string }) => q.question));
                 setCurrentQuestionIndex(0);
-                setIsInterviewStarted(true);
+                setShowFlashcard(true); // Open the flashcard overlay
             } else {
                 alert("Failed to generate interview questions.");
             }
@@ -91,7 +77,6 @@ const MainPage: React.FC = () => {
             alert("Error fetching interview questions.");
         }
     };
-    
 
     const startInterview = () => {
         fetchInterviewQuestions();
@@ -101,8 +86,8 @@ const MainPage: React.FC = () => {
         if (currentQuestionIndex < interviewQuestions.length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
         } else {
-            alert("End of questions. Restarting...");
-            setIsInterviewStarted(false);
+            alert("End of questions.");
+            setShowFlashcard(false);
         }
     };
 
@@ -154,21 +139,6 @@ const MainPage: React.FC = () => {
                     </div>
                 )}
 
-                {/* Display Extracted PDF Content */}
-                {/* {pdfContent && (
-                    <div className="pdf-content-container">
-                        <h3>Extracted Resume Text:</h3>
-                        <pre>{pdfContent}</pre>
-                    </div>
-                )}
-
-                {jobDescriptionContent && (
-                    <div className="job-description-container">
-                        <h3>Saved Job Description:</h3>
-                        <pre>{jobDescriptionContent}</pre>
-                    </div>
-                )} */}
-
                 {/* Start Interview Button */}
                 <button
                     className={`start-interview-button ${resume && jobDescription ? "enabled" : "disabled"}`}
@@ -178,15 +148,20 @@ const MainPage: React.FC = () => {
                     Start Interview
                 </button>
 
-                {/* Interview Questions Section */}
-                {isInterviewStarted && interviewQuestions.length > 0 && (
-                    <div className="interview-container">
-                        <h2>Interview Question</h2>
-                        <p className="question-text">{interviewQuestions[currentQuestionIndex]}</p>
+                {/* Flashcard Overlay for Interview Questions */}
+                {showFlashcard && interviewQuestions.length > 0 && (
+                    <div className="flashcard-overlay">
+                        <div className="flashcard-content">
+                            <h2>Interview Question</h2>
+                            <p className="question-text">{interviewQuestions[currentQuestionIndex]}</p>
 
-                        <button className="next-question-button" onClick={nextQuestion}>
-                            {currentQuestionIndex < interviewQuestions.length - 1 ? "Next Question" : "Finish"}
-                        </button>
+                            <div className="flashcard-buttons">
+                                <button className="close-button" onClick={() => setShowFlashcard(false)}>Close</button>
+                                <button className="next-question-button" onClick={nextQuestion}>
+                                    {currentQuestionIndex < interviewQuestions.length - 1 ? "Next Question" : "Finish"}
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 )}
             </div>
