@@ -8,9 +8,11 @@ const MainPage: React.FC = () => {
     const [tempJobDescription, setTempJobDescription] = useState("");
     const [resume, setResume] = useState<File | null>(null);
     const [pdfContent, setPdfContent] = useState<string>("");
+    const [jobDescriptionContent, setJobDescriptionContent] = useState<string>("");
 
     const handleSave = () => {
         setJobDescription(tempJobDescription);
+        setJobDescriptionContent(tempJobDescription); // Save job description content
         setShowModal(false);
     };
 
@@ -110,6 +112,13 @@ const MainPage: React.FC = () => {
                     <div className="pdf-content-container">
                         <h3>Extracted Resume Text:</h3>
                         <pre>{pdfContent}</pre>
+                    </div>
+                )} */}
+
+                {/* {jobDescriptionContent && (
+                    <div className="job-description-container">
+                        <h3>Saved Job Description:</h3>
+                        <pre>{jobDescriptionContent}</pre>
                     </div>
                 )} */}
 
