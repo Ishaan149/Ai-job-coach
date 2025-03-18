@@ -1,6 +1,7 @@
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from PyPDF2 import PdfReader
+from pydantic import BaseModel
 
 
 app = FastAPI()
@@ -26,6 +27,23 @@ async def upload_pdf(file: UploadFile = File(...)):
         return {"filename": file.filename, "content": text}
     except Exception as e:
         return {"error": str(e)}
+
+# Request model for job description and resume
+class InterviewRequest(BaseModel):
+    resume_text: str
+    job_description: str
+
+@app.post("/generate_questions/")
+async def generate_questions(request: InterviewRequest):
+    """Returns default interview questions for testing."""
+    default_questions = [
+        {"question": "Tell me about yourself."},
+        {"question": "What are your strengths and weaknesses?"},
+        {"question": "Why do you want this job?"},
+        {"question": "Where do you see yourself in five years?"},
+        {"question": "Describe a challenging project you worked on."},
+    ]
+    return {"questions": default_questions}
 
 if __name__ == "__main__":
     import uvicorn

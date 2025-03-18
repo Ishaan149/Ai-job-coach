@@ -10,9 +10,13 @@ const MainPage: React.FC = () => {
     const [pdfContent, setPdfContent] = useState<string>("");
     const [jobDescriptionContent, setJobDescriptionContent] = useState<string>("");
 
+    const [interviewQuestions, setInterviewQuestions] = useState<string[]>([]);
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    const [isInterviewStarted, setIsInterviewStarted] = useState(false);
+
     const handleSave = () => {
         setJobDescription(tempJobDescription);
-        setJobDescriptionContent(tempJobDescription); // Save job description content
+        setJobDescriptionContent(tempJobDescription);
         setShowModal(false);
     };
 
@@ -54,9 +58,52 @@ const MainPage: React.FC = () => {
         }
     };
 
+    const fetchInterviewQuestions = async () => {
+        console.log("Fetching interview questions...");
+    
+        if (!pdfContent || !jobDescriptionContent) {
+            alert("Resume text or Job Description is missing!");
+            return;
+        }
+    
+        try {
+            console.log("Sending request to backend with:", {
+                resume_text: pdfContent,
+                job_description: jobDescriptionContent,
+            });
+    
+            const response = await axios.post("http://127.0.0.1:8000/generate_questions/", {
+                resume_text: pdfContent,
+                job_description: jobDescriptionContent,
+            });
+    
+            console.log("Response received:", response.data);
+    
+            if (response.data.questions) {
+                setInterviewQuestions(response.data.questions.map((q: { question: string }) => q.question));
+                setCurrentQuestionIndex(0);
+                setIsInterviewStarted(true);
+            } else {
+                alert("Failed to generate interview questions.");
+            }
+        } catch (error) {
+            console.error("Error fetching interview questions:", error);
+            alert("Error fetching interview questions.");
+        }
+    };
+    
+
     const startInterview = () => {
-        alert("Starting the interview process...");
-        // Add your interview process logic here
+        fetchInterviewQuestions();
+    };
+
+    const nextQuestion = () => {
+        if (currentQuestionIndex < interviewQuestions.length - 1) {
+            setCurrentQuestionIndex(currentQuestionIndex + 1);
+        } else {
+            alert("End of questions. Restarting...");
+            setIsInterviewStarted(false);
+        }
     };
 
     return (
@@ -80,7 +127,7 @@ const MainPage: React.FC = () => {
                     {resume ? `Uploaded: ${resume.name}` : "Upload Resume"}
                 </button>
 
-                {/* Job Upload Button */}
+                {/* Job Description Upload Button */}
                 <button
                     className={`job-button ${jobDescription ? "job-added" : ""}`}
                     id="upload-button"
@@ -107,15 +154,15 @@ const MainPage: React.FC = () => {
                     </div>
                 )}
 
-                {/* Display Extracted PDF Content
-                {pdfContent && (
+                {/* Display Extracted PDF Content */}
+                {/* {pdfContent && (
                     <div className="pdf-content-container">
                         <h3>Extracted Resume Text:</h3>
                         <pre>{pdfContent}</pre>
                     </div>
-                )} */}
+                )}
 
-                {/* {jobDescriptionContent && (
+                {jobDescriptionContent && (
                     <div className="job-description-container">
                         <h3>Saved Job Description:</h3>
                         <pre>{jobDescriptionContent}</pre>
@@ -130,6 +177,18 @@ const MainPage: React.FC = () => {
                 >
                     Start Interview
                 </button>
+
+                {/* Interview Questions Section */}
+                {isInterviewStarted && interviewQuestions.length > 0 && (
+                    <div className="interview-container">
+                        <h2>Interview Question</h2>
+                        <p className="question-text">{interviewQuestions[currentQuestionIndex]}</p>
+
+                        <button className="next-question-button" onClick={nextQuestion}>
+                            {currentQuestionIndex < interviewQuestions.length - 1 ? "Next Question" : "Finish"}
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );
