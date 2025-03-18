@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import "./MainPage.css";
 
 const MainPage: React.FC = () => {
@@ -6,6 +7,7 @@ const MainPage: React.FC = () => {
     const [jobDescription, setJobDescription] = useState("");
     const [tempJobDescription, setTempJobDescription] = useState("");
     const [resume, setResume] = useState<File | null>(null);
+    const [pdfContent, setPdfContent] = useState<string>("");
 
     const handleSave = () => {
         setJobDescription(tempJobDescription);
@@ -17,15 +19,36 @@ const MainPage: React.FC = () => {
         setShowModal(true);
     };
 
-    const handleResumeUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleResumeUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
             const file = event.target.files[0];
 
             if (file.type === "application/pdf") {
                 setResume(file);
+                await uploadResume(file);
             } else {
                 alert("Please upload a PDF file.");
             }
+        }
+    };
+
+    const uploadResume = async (file: File) => {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const response = await axios.post("http://127.0.0.1:8000/upload/", formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+
+            if (response.data.content) {
+                setPdfContent(response.data.content);
+            } else {
+                alert("Failed to extract text from the PDF.");
+            }
+        } catch (error) {
+            console.error("Error uploading resume:", error);
+            alert("Error uploading resume.");
         }
     };
 
@@ -81,6 +104,14 @@ const MainPage: React.FC = () => {
                         </div>
                     </div>
                 )}
+
+                {/* Display Extracted PDF Content
+                {pdfContent && (
+                    <div className="pdf-content-container">
+                        <h3>Extracted Resume Text:</h3>
+                        <pre>{pdfContent}</pre>
+                    </div>
+                )} */}
 
                 {/* Start Interview Button */}
                 <button
