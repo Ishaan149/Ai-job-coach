@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from PyPDF2 import PdfReader
 from pydantic import BaseModel
 
-
+#import fastapi
 app = FastAPI()
 
 # CORS Middleware to allow frontend to communicate with backend
