@@ -33,6 +33,17 @@ class InterviewRequest(BaseModel):
     resume_text: str
     job_description: str
 
+class IdealAnswerRequest(BaseModel):
+    resume_text: str
+    job_description: str
+    question: str
+
+@app.post("/generate_ideal_answer/")
+async def generate_ideal_answer(request: IdealAnswerRequest):
+    # Replace this with a call to OpenAI or your LLM
+    return {"answer": f"This is a sample ideal answer for: {request.question}"}
+
+
 @app.post("/generate_questions/")
 async def generate_questions(request: InterviewRequest):
     """Returns default interview questions for testing."""

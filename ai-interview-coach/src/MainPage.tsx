@@ -13,6 +13,9 @@ const MainPage: React.FC = () => {
     const [interviewQuestions, setInterviewQuestions] = useState<string[]>([]);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [showFlashcard, setShowFlashcard] = useState(false);
+    const [showAnswer, setShowAnswer] = useState(false);
+    const [currentAnswer, setCurrentAnswer] = useState("");
+    const [loadingAnswer, setLoadingAnswer] = useState(false);
 
     const handleSave = () => {
         setJobDescription(tempJobDescription);
@@ -87,6 +90,9 @@ const MainPage: React.FC = () => {
         if (currentQuestionIndex > 0) {
             setCurrentQuestionIndex(currentQuestionIndex - 1);
         }
+        setShowAnswer(false);
+        setCurrentAnswer("");
+
     };
     
     const nextQuestion = () => {
@@ -98,7 +104,42 @@ const MainPage: React.FC = () => {
             setCurrentQuestionIndex(0);
             setInterviewQuestions([]);
         }
+        setShowAnswer(false);
+        setCurrentAnswer("");
+
     };
+
+    const fetchIdealAnswer = async () => {
+        const question = interviewQuestions[currentQuestionIndex];
+        if (!question || !pdfContent || !jobDescriptionContent) return;
+    
+        // 👇 If already showing, just hide it
+        if (showAnswer) {
+            setShowAnswer(false);
+            return;
+        }
+    
+        setLoadingAnswer(true);
+        try {
+            const response = await axios.post("http://127.0.0.1:8000/generate_ideal_answer/", {
+                resume_text: pdfContent,
+                job_description: jobDescriptionContent,
+                question,
+            });
+    
+            if (response.data.answer) {
+                setCurrentAnswer(response.data.answer);
+                setShowAnswer(true);
+            }
+        } catch (error) {
+            console.error("Error fetching ideal answer:", error);
+            alert("Failed to fetch ideal answer.");
+        } finally {
+            setLoadingAnswer(false);
+        }
+    };
+    
+    
     
 
     return (
@@ -165,8 +206,16 @@ const MainPage: React.FC = () => {
                             <h2>Interview Question</h2>
                             <p className="question-text">{interviewQuestions[currentQuestionIndex]}</p>
 
+                            <div className="ideal-answer-container">
+                                {showAnswer && (
+                                    <div className="ideal-answer-box">
+                                        <h3>Ideal Answer:</h3>
+                                        <p>{currentAnswer}</p>
+                                    </div>
+                                )}
+                            </div>
+
                             <div className="flashcard-buttons">
-                                {/* Previous Question Button */}
                                 <button 
                                     className="prev-question-button" 
                                     onClick={prevQuestion}
@@ -174,8 +223,15 @@ const MainPage: React.FC = () => {
                                 >
                                     Previous
                                 </button>
+                                
+                                <button 
+                                    className="show-answer-button"
+                                    onClick={fetchIdealAnswer}
+                                    disabled={loadingAnswer}
+                                >
+                                    {loadingAnswer ? "Loading..." : showAnswer ? "Hide Ideal Answer" : "Show Ideal Answer"}
+                                </button>
 
-                                {/* Next Question Button */}
                                 <button 
                                     className="next-question-button" 
                                     onClick={nextQuestion}
@@ -184,6 +240,7 @@ const MainPage: React.FC = () => {
                                 </button>
                             </div>
                         </div>
+
                     </div>
                 )}
             </div>
