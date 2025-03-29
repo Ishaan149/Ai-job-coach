@@ -82,14 +82,24 @@ const MainPage: React.FC = () => {
         fetchInterviewQuestions();
     };
 
+
+    const prevQuestion = () => {
+        if (currentQuestionIndex > 0) {
+            setCurrentQuestionIndex(currentQuestionIndex - 1);
+        }
+    };
+    
     const nextQuestion = () => {
         if (currentQuestionIndex < interviewQuestions.length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
         } else {
-            alert("End of questions.");
+            // Reset flashcard and index when interview is finished
             setShowFlashcard(false);
+            setCurrentQuestionIndex(0);
+            setInterviewQuestions([]);
         }
     };
+    
 
     return (
         <div className="main-container">
@@ -156,9 +166,21 @@ const MainPage: React.FC = () => {
                             <p className="question-text">{interviewQuestions[currentQuestionIndex]}</p>
 
                             <div className="flashcard-buttons">
-                                <button className="close-button" onClick={() => setShowFlashcard(false)}>Close</button>
-                                <button className="next-question-button" onClick={nextQuestion}>
-                                    {currentQuestionIndex < interviewQuestions.length - 1 ? "Next Question" : "Finish"}
+                                {/* Previous Question Button */}
+                                <button 
+                                    className="prev-question-button" 
+                                    onClick={prevQuestion}
+                                    disabled={currentQuestionIndex === 0}
+                                >
+                                    Previous
+                                </button>
+
+                                {/* Next Question Button */}
+                                <button 
+                                    className="next-question-button" 
+                                    onClick={nextQuestion}
+                                >
+                                    {currentQuestionIndex < interviewQuestions.length - 1 ? "Next" : "Finish"}
                                 </button>
                             </div>
                         </div>
@@ -170,3 +192,4 @@ const MainPage: React.FC = () => {
 };
 
 export default MainPage;
+

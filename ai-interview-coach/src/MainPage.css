@@ -326,7 +326,7 @@ h2 {
 }
 
 .flashcard-buttons .next-question-button,
-.flashcard-buttons .close-button {
+.flashcard-buttons .prev-question-button {
     padding: 12px 25px;
     font-size: 1.1rem;
     font-weight: bold;
@@ -335,7 +335,8 @@ h2 {
     transition: all 0.3s ease-in-out;
 }
 
-.flashcard-buttons .next-question-button {
+.flashcard-buttons .next-question-button,
+.flashcard-buttons .prev-question-button {
     background: linear-gradient(90deg, #FFC107, #FF9800);
     color: black;
 }
@@ -346,7 +347,7 @@ h2 {
 }
 
 .flashcard-buttons .next-question-button:hover,
-.flashcard-buttons .close-button:hover {
+.flashcard-buttons .prev-question-button {
     transform: scale(1.05);
 }
 
