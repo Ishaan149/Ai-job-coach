@@ -16,6 +16,7 @@ const MainPage: React.FC = () => {
     const [showAnswer, setShowAnswer] = useState(false);
     const [currentAnswer, setCurrentAnswer] = useState("");
     const [loadingAnswer, setLoadingAnswer] = useState(false);
+    const [loadingInterview, setLoadingInterview] = useState(false);
 
     const handleSave = () => {
         setJobDescription(tempJobDescription);
@@ -62,24 +63,28 @@ const MainPage: React.FC = () => {
     };
 
     const fetchInterviewQuestions = async () => {
+        setLoadingInterview(true);
         try {
             const response = await axios.post("http://127.0.0.1:8000/generate_questions/", {
                 resume_text: pdfContent,
                 job_description: jobDescriptionContent,
             });
-
+    
             if (response.data.questions) {
                 setInterviewQuestions(response.data.questions.map((q: { question: string }) => q.question));
                 setCurrentQuestionIndex(0);
-                setShowFlashcard(true); // Open the flashcard overlay
+                setShowFlashcard(true);
             } else {
                 alert("Failed to generate interview questions.");
             }
         } catch (error) {
             console.error("Error fetching interview questions:", error);
             alert("Error fetching interview questions.");
+        } finally {
+            setLoadingInterview(false);
         }
     };
+    
 
     const startInterview = () => {
         fetchInterviewQuestions();
@@ -192,12 +197,13 @@ const MainPage: React.FC = () => {
 
                 {/* Start Interview Button */}
                 <button
-                    className={`start-interview-button ${resume && jobDescription ? "enabled" : "disabled"}`}
+                    className={`start-interview-button ${(resume && jobDescription && !loadingInterview) ? "enabled" : "disabled"}`}
                     onClick={startInterview}
-                    disabled={!resume || !jobDescription}
+                    disabled={!resume || !jobDescription || loadingInterview}
                 >
-                    Start Interview
+                    {loadingInterview ? "Loading..." : "Start Interview"}
                 </button>
+
 
                 {/* Flashcard Overlay for Interview Questions */}
                 {showFlashcard && interviewQuestions.length > 0 && (
