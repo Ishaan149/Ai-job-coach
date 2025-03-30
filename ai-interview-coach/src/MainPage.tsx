@@ -17,6 +17,8 @@ const MainPage: React.FC = () => {
     const [currentAnswer, setCurrentAnswer] = useState("");
     const [loadingAnswer, setLoadingAnswer] = useState(false);
     const [loadingInterview, setLoadingInterview] = useState(false);
+    const [answers, setAnswers] = useState<(string | null)[]>([]);
+
 
     const handleSave = () => {
         setJobDescription(tempJobDescription);
@@ -71,8 +73,10 @@ const MainPage: React.FC = () => {
             });
     
             if (response.data.questions) {
-                setInterviewQuestions(response.data.questions.map((q: { question: string }) => q.question));
+                const extractedQuestions = response.data.questions.map((q: { question: string }) => q.question);
+                setInterviewQuestions(extractedQuestions);
                 setCurrentQuestionIndex(0);
+                setAnswers(Array(extractedQuestions.length).fill(null));
                 setShowFlashcard(true);
             } else {
                 alert("Failed to generate interview questions.");
@@ -115,14 +119,25 @@ const MainPage: React.FC = () => {
     };
 
     const fetchIdealAnswer = async () => {
-        const question = interviewQuestions[currentQuestionIndex];
-        if (!question || !pdfContent || !jobDescriptionContent) return;
+        const questionIndex = currentQuestionIndex;
+        const cachedAnswer = answers[questionIndex];
     
-        // 👇 If already showing, just hide it
+        // If already showing, hide it
         if (showAnswer) {
             setShowAnswer(false);
             return;
         }
+    
+        // If cached, show it without API call
+        if (cachedAnswer) {
+            setCurrentAnswer(cachedAnswer);
+            setShowAnswer(true);
+            return;
+        }
+    
+        // Else fetch from API
+        const question = interviewQuestions[questionIndex];
+        if (!question || !pdfContent || !jobDescriptionContent) return;
     
         setLoadingAnswer(true);
         try {
@@ -133,6 +148,10 @@ const MainPage: React.FC = () => {
             });
     
             if (response.data.answer) {
+                const updatedAnswers = [...answers];
+                updatedAnswers[questionIndex] = response.data.answer;
+                setAnswers(updatedAnswers);
+    
                 setCurrentAnswer(response.data.answer);
                 setShowAnswer(true);
             }
@@ -143,6 +162,7 @@ const MainPage: React.FC = () => {
             setLoadingAnswer(false);
         }
     };
+    
     
     
     
