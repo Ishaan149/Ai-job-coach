@@ -375,11 +375,11 @@ h2 {
     color: #92ff04cd;
 }
 
-/* Flashcard animation wrapper */
 .flashcard-slide {
     animation: slideFlashcard 0.4s ease-in-out;
 }
 
+/* Animations */
 @keyframes slideFlashcard {
     0% {
         opacity: 0;
@@ -391,7 +391,6 @@ h2 {
     }
 }
 
-/* Animations */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
