@@ -18,6 +18,8 @@ const MainPage: React.FC = () => {
     const [loadingAnswer, setLoadingAnswer] = useState(false);
     const [loadingInterview, setLoadingInterview] = useState(false);
     const [answers, setAnswers] = useState<(string | null)[]>([]);
+    const [flashcardKey, setFlashcardKey] = useState(0);
+
 
 
     const handleSave = () => {
@@ -97,25 +99,24 @@ const MainPage: React.FC = () => {
 
     const prevQuestion = () => {
         if (currentQuestionIndex > 0) {
-            setCurrentQuestionIndex(currentQuestionIndex - 1);
+            setCurrentQuestionIndex((prev) => prev - 1);
+            setFlashcardKey((prevKey) => prevKey + 1);
         }
         setShowAnswer(false);
         setCurrentAnswer("");
-
     };
     
     const nextQuestion = () => {
         if (currentQuestionIndex < interviewQuestions.length - 1) {
-            setCurrentQuestionIndex(currentQuestionIndex + 1);
+            setCurrentQuestionIndex((prev) => prev + 1);
+            setFlashcardKey((prevKey) => prevKey + 1);
         } else {
-            // Reset flashcard and index when interview is finished
             setShowFlashcard(false);
             setCurrentQuestionIndex(0);
             setInterviewQuestions([]);
         }
         setShowAnswer(false);
         setCurrentAnswer("");
-
     };
 
     const fetchIdealAnswer = async () => {
@@ -229,44 +230,46 @@ const MainPage: React.FC = () => {
                 {showFlashcard && interviewQuestions.length > 0 && (
                     <div className="flashcard-overlay">
                         <div className="flashcard-content">
-                            <h2>Interview Question</h2>
-                            <p className="question-text">{interviewQuestions[currentQuestionIndex]}</p>
+                            {/* Wrap the animated section with a key to trigger animation */}
+                            <div key={flashcardKey} className="flashcard-slide">
+                                <h2>Interview Question</h2>
+                                <p className="question-text">{interviewQuestions[currentQuestionIndex]}</p>
 
-                            <div className="ideal-answer-container">
-                                {showAnswer && (
-                                    <div className="ideal-answer-box">
-                                        <h3>Ideal Answer:</h3>
-                                        <p>{currentAnswer}</p>
-                                    </div>
-                                )}
-                            </div>
+                                <div className="ideal-answer-container">
+                                    {showAnswer && (
+                                        <div className="ideal-answer-box">
+                                            <h3>Ideal Answer:</h3>
+                                            <p>{currentAnswer}</p>
+                                        </div>
+                                    )}
+                                </div>
 
-                            <div className="flashcard-buttons">
-                                <button 
-                                    className="prev-question-button" 
-                                    onClick={prevQuestion}
-                                    disabled={currentQuestionIndex === 0}
-                                >
-                                    Previous
-                                </button>
-                                
-                                <button 
-                                    className="show-answer-button"
-                                    onClick={fetchIdealAnswer}
-                                    disabled={loadingAnswer}
-                                >
-                                    {loadingAnswer ? "Loading..." : showAnswer ? "Hide Ideal Answer" : "Show Ideal Answer"}
-                                </button>
+                                <div className="flashcard-buttons">
+                                    <button 
+                                        className="prev-question-button" 
+                                        onClick={prevQuestion}
+                                        disabled={currentQuestionIndex === 0}
+                                    >
+                                        Previous
+                                    </button>
 
-                                <button 
-                                    className="next-question-button" 
-                                    onClick={nextQuestion}
-                                >
-                                    {currentQuestionIndex < interviewQuestions.length - 1 ? "Next" : "Finish"}
-                                </button>
+                                    <button 
+                                        className="show-answer-button"
+                                        onClick={fetchIdealAnswer}
+                                        disabled={loadingAnswer}
+                                    >
+                                        {loadingAnswer ? "Loading..." : showAnswer ? "Hide Ideal Answer" : "Show Ideal Answer"}
+                                    </button>
+
+                                    <button 
+                                        className="next-question-button" 
+                                        onClick={nextQuestion}
+                                    >
+                                        {currentQuestionIndex < interviewQuestions.length - 1 ? "Next" : "Finish"}
+                                    </button>
+                                </div>
                             </div>
                         </div>
-
                     </div>
                 )}
             </div>
