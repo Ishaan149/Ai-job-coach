@@ -4,3 +4,4 @@ python-dotenv
 pydantic
 PyPDF2
 anthropic
+python-multipart
