@@ -51,7 +51,7 @@ const MainPage: React.FC = () => {
         formData.append("file", file);
 
         try {
-            const response = await axios.post("http://127.0.0.1:8000/upload/", formData, {
+            const response = await axios.post("https://ai-job-coach.onrender.com/upload/", formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
 
@@ -69,7 +69,7 @@ const MainPage: React.FC = () => {
     const fetchInterviewQuestions = async () => {
         setLoadingInterview(true);
         try {
-            const response = await axios.post("http://127.0.0.1:8000/generate_questions/", {
+            const response = await axios.post("https://ai-job-coach.onrender.com/generate_questions/", {
                 resume_text: pdfContent,
                 job_description: jobDescriptionContent,
             });
@@ -142,7 +142,7 @@ const MainPage: React.FC = () => {
     
         setLoadingAnswer(true);
         try {
-            const response = await axios.post("http://127.0.0.1:8000/generate_ideal_answer/", {
+            const response = await axios.post("https://ai-job-coach.onrender.com/generate_ideal_answer/", {
                 resume_text: pdfContent,
                 job_description: jobDescriptionContent,
                 question,
